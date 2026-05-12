@@ -1,7 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const User = require("../models/user");
-const validateSignupData = require("../utils/validation");
+const { validateSignupData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 
@@ -37,6 +37,17 @@ router.post("/signup", async (req, res) => {
     });
     await user.save();
     res.send("User create successfully");
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
+router.post("/logout", async (req, res) => {
+  try {
+    res.cookie("access_token", null, {
+      expires: new Date(Date.now()),
+    });
+    res.send("User logged out");
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }
