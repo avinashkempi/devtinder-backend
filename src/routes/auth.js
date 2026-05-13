@@ -18,7 +18,7 @@ router.post("/login", async (req, res) => {
       res.cookie("access_token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
       });
-      res.send("User logged in");
+      res.json({ message: "User logged in", data: user });
     } else throw new Error("Invalid credentials");
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
