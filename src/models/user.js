@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema(
       minLength: 4,
       maxLength: 50,
     },
+    about: {
+      type: String,
+    },
     email: {
       type: String,
       required: true,
@@ -44,8 +47,8 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: {
-        values: ["male", "female"],
-        message: "{VALUE} is incorrect gender type",
+        values: ["male", "female", "non-binary", "prefer not to say"],
+        message: "{VALUE} is an incorrect gender type",
       },
     },
     photoUrl: {

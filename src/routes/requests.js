@@ -67,7 +67,8 @@ router.post(
       await connectionRequest.save();
       res.send("Status Updated");
     } catch (err) {
-      res.status(400).send("Invalid data");
+      console.error("/request/review error:", err);
+      res.status(400).send(err?.message || "Invalid data");
     }
   },
 );

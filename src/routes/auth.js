@@ -28,15 +28,46 @@ router.post("/login", async (req, res) => {
 router.post("/signup", async (req, res) => {
   try {
     validateSignupData(req);
-    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
-    let user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      age,
+      gender,
+      about,
+      photoUrl,
+      skills,
+    } = req.body;
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    const normalizedSkills = Array.isArray(skills)
+      ? skills
+      : typeof skills === "string"
+        ? skills
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : [];
+
+    const user = new User({
+      firstName,
+      lastName,
+      email,
       password: encryptedPassword,
+      age,
+      gender,
+      about,
+      photoUrl,
+      skills: normalizedSkills,
     });
-    await user.save();
-    res.send("User create successfully");
+
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
+    res.cookie("access_token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.json({ message: "User created successfully", data: savedUser });
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }

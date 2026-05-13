@@ -12,7 +12,6 @@ const validateSignupData = (req) => {
 };
 
 const validateUserData = (req) => {
-  validateSignupData(req);
   const allowedEdits = [
     "firstName",
     "lastName",
@@ -20,11 +19,13 @@ const validateUserData = (req) => {
     "gender",
     "skills",
     "photoUrl",
+    "about",
   ];
   const isAllowed = Object.keys(req.body).every((key) =>
     allowedEdits.includes(key),
   );
-  return isAllowed;
+  if (!isAllowed) throw new Error("Not allowed to edit");
+  return true;
 };
 
 module.exports = { validateSignupData, validateUserData };
