@@ -10,13 +10,22 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestsRouter = require("./routes/requests");
 const userRouter = require("./routes/user");
+const chatRouter = require("./routes/chat");
 const cors = require("cors");
 const app = express();
+require("./utils/cronjob");
+const http = require("http");
+const initiazeSocket = require("./utils/socket");
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+const server = http.createServer(app);
+initiazeSocket(server);
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -24,11 +33,12 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestsRouter);
 app.use("/", userRouter);
+app.use("/", chatRouter);
 
 connectDB()
   .then(() => {
     console.log("DB connected");
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log(`App listening on port ${3000}`);
     });
   })
